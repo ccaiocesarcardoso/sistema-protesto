@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Protesto 2026</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+
+    <div id="login-screen">
+        <div class="login-card">
+            <i class="fa-solid fa-lock" style="font-size: 40px; color: var(--primary); margin-bottom: 20px;"></i>
+            <h2>Acesso ao Sistema</h2>
+            <p>Protesto 2026 - Versão Licenciada</p>
+            <div class="input-group">
+                <label>Senha de Acesso</label>
+                <input type="password" id="loginPassword" placeholder="Digite sua senha">
+            </div>
+            <button class="btn-save" onclick="verificarLogin()" style="width: 100%; margin-top: 10px;">
+                <i class="fa-solid fa-right-to-bracket"></i> Entrar
+            </button>
+            <p id="loginError" style="color: #e74c3c; font-size: 13px; margin-top: 10px; display: none;">Senha
+                incorreta!</p>
+        </div>
+    </div>
+
+    <div class="wrapper" style="display: none;">
+        <nav id="sidebar">
+            <div class="sidebar-header" style="cursor: pointer;" onclick="showPage('home')">
+                <h3><i class="fa-solid fa-gavel"></i> PROTESTO</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li class="active">
+                    <a href="#" onclick="showPage('calculo')">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> CPF/CNPJ - Liq/Desistência
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showPage('cancelamento')">
+                        <i class="fa-solid fa-ban"></i> CPF/CNPJ - Cancelamento
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showPage('me-liquidacao')">
+                        <i class="fa-solid fa-building"></i> ME - Liq/Desistência
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showPage('me-cancelamento')">
+                        <i class="fa-solid fa-building"></i> ME - Cancelamento
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showPage('certidoes')">
+                        <i class="fa-solid fa-file-signature"></i> Certidões de Protesto
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showPage('tabela')">
+                        <i class="fa-solid fa-table"></i> Tabela Emolumentos 2026
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showPage('historico')">
+                        <i class="fa-solid fa-history"></i> Histórico
+                    </a>
+                </li>
+
+                <li>
+                    <a href="javascript:void(0)" onclick="toggleTheme()">
+                        <i id="theme-icon" class="fa-solid fa-moon"></i>
+                        <span id="theme-text">Modo Escuro</span>
+                    </a>
+                </li>
+
+                <li class="logout">
+                    <a href="javascript:void(0)" onclick="fazerLogout()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Sair
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="content">
+            <header>
+                <h2 id="page-title">Início - Sistema de Orçamentos</h2>
+            </header>
+
+            <div id="page-home" class="page-section">
+                <div class="card" style="text-align: center; padding: 50px 20px;">
+                    <i class="fa-solid fa-handshake"
+                        style="font-size: 50px; color: var(--accent); margin-bottom: 20px;"></i>
+                    <h1 style="color: var(--primary);">Seja bem-vindo!</h1>
+                    <p style="font-size: 18px; color: #666;">
+                        Este sistema é para cálculos e orçamentos do protesto. <br>
+                        Utilize the menu lateral para selecionar o tipo de serviço desejado.
+                    </p>
+                    <div
+                        style="margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <button class="btn-save" onclick="showPage('calculo')" style="background: var(--accent);">
+                            <i class="fa-solid fa-file-invoice-dollar"></i> Nova Liquidação
+                        </button>
+                        <button class="btn-save" onclick="showPage('cancelamento')" style="background: var(--primary);">
+                            <i class="fa-solid fa-ban"></i> Novo Cancelamento
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-calculo" class="page-section" style="display:none;">
+                <div class="card grid-form">
+                    <div class="input-group"><label>Credor</label><input type="text" id="credor"
+                            placeholder="Nome do Credor"></div>
+                    <div class="input-group"><label>Devedor</label><input type="text" id="devedor"
+                            placeholder="Nome do Devedor"></div>
+                    <div class="input-group"><label>Documento</label><input type="text" id="documento"
+                            placeholder="CPF/CNPJ"></div>
+                    <div class="input-group"><label>Valor do Título R$</label><input type="number" id="valorTitulo"
+                            step="0.01" oninput="calcular()" placeholder="0.00"></div>
+                    <div class="input-group"><label>Qtd. Devedores</label><input type="number" id="qtdDevedores"
+                            value="1" min="1" oninput="calcular()"></div>
+                    <div class="input-group"><label>ISS %</label><input type="number" id="iss" value="5"
+                            oninput="calcular()"></div>
+                    <div class="input-group"><label>Taxa de Correio R$</label><input type="number" id="taxaCorreio"
+                            step="0.01" oninput="calcular()" placeholder="0.00"></div>
+                </div>
+                <div class="resultado-container">
+                    <div class="resumo-selos" id="resumoSelos">
+                        <i class="fa-solid fa-file-invoice-dollar"
+                            style="font-size: 40px; color: #eee; display: block; margin-bottom: 10px;"></i>
+                        <p class="placeholder-text">Preencha o valor do título para ver os selos.</p>
+                    </div>
+                    <div class="total-box">
+                        <small>TOTAL DO ORÇAMENTO</small>
+                        <h1 id="totalGeral">R$ 0,00</h1>
+                        <button class="btn-save" onclick="salvarHistorico()"><i class="fa-solid fa-save"></i>
+                            Salvar</button>
+                        <button class="btn-clear" onclick="limparFormulario()"><i class="fa-solid fa-eraser"></i>
+                            Limpar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-cancelamento" class="page-section" style="display:none;">
+                <div class="card grid-form">
+                    <div class="input-group"><label>Credor</label><input type="text" id="credorCancel"
+                            placeholder="Nome do Credor"></div>
+                    <div class="input-group"><label>Devedor</label><input type="text" id="devedorCancel"
+                            placeholder="Nome do Devedor"></div>
+                    <div class="input-group"><label>Documento</label><input type="text" id="documentoCancel"
+                            placeholder="CPF/CNPJ"></div>
+                    <div class="input-group"><label>Valor do Título R$</label><input type="number"
+                            id="valorTituloCancel" step="0.01" oninput="calcularCancelamento()" placeholder="0.00">
+                    </div>
+                    <div class="input-group"><label>Qtd. Devedores</label><input type="number" id="qtdDevedoresCancel"
+                            value="1" min="1" oninput="calcularCancelamento()"></div>
+                    <div class="input-group"><label>ISS %</label><input type="number" id="issCancel" value="5"
+                            oninput="calcularCancelamento()"></div>
+                    <div class="input-group"><label>Taxa de Correio R$</label><input type="number"
+                            id="taxaCorreioCancel" step="0.01" oninput="calcularCancelamento()" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="resultado-container">
+                    <div class="resumo-selos" id="resumoCancelamento">
+                        <i class="fa-solid fa-ban"
+                            style="font-size: 40px; color: #eee; display: block; margin-bottom: 10px;"></i>
+                        <p class="placeholder-text">Preencha o valor para calcular o cancelamento (Diferido).</p>
+                    </div>
+                    <div class="total-box">
+                        <small>TOTAL DO CANCELAMENTO</small>
+                        <h1 id="totalGeralCancel">R$ 0,00</h1>
+                        <button class="btn-save" onclick="salvarHistorico()"><i class="fa-solid fa-save"></i>
+                            Salvar</button>
+                        <button class="btn-clear" onclick="limparFormulario()"><i class="fa-solid fa-eraser"></i>
+                            Limpar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-me-liquidacao" class="page-section" style="display:none;">
+                <div class="card grid-form">
+                    <div class="input-group"><label>Credor</label><input type="text" id="credorMELiq"></div>
+                    <div class="input-group"><label>Devedor</label><input type="text" id="devedorMELiq"></div>
+                    <div class="input-group"><label>Valor do Título R$</label><input type="number" id="valorTituloMELiq"
+                            step="0.01" oninput="calcularMELiquidacao()" placeholder="0.00"></div>
+                    <div class="input-group"><label>Qtd. Devedores</label><input type="number" id="qtdMELiq" value="1"
+                            min="1" oninput="calcularMELiquidacao()"></div>
+                    <div class="input-group"><label>ISS %</label><input type="number" id="issMELiq" value="5"
+                            oninput="calcularMELiquidacao()"></div>
+                    <div class="input-group"><label>Taxa de Correio R$</label><input type="number" id="taxaCorreioMELiq"
+                            step="0.01" oninput="calcularMELiquidacao()" placeholder="0.00"></div>
+                </div>
+                <div class="resultado-container">
+                    <div class="resumo-selos" id="resumoMELiq">
+                        <i class="fa-solid fa-building"
+                            style="font-size: 40px; color: #eee; display: block; margin-bottom: 10px;"></i>
+                        <p class="placeholder-text">Preencha o valor para calcular Liquidação ME.</p>
+                    </div>
+                    <div class="total-box">
+                        <small>TOTAL LIQUIDAÇÃO ME</small>
+                        <h1 id="totalGeralMELiq">R$ 0,00</h1>
+                        <button class="btn-save" onclick="salvarHistorico()"><i class="fa-solid fa-save"></i>
+                            Salvar</button>
+                        <button class="btn-clear" onclick="limparFormulario()"><i class="fa-solid fa-eraser"></i>
+                            Limpar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-me-cancelamento" class="page-section" style="display:none;">
+                <div class="card grid-form">
+                    <div class="input-group"><label>Credor</label><input type="text" id="credorMECancel"></div>
+                    <div class="input-group"><label>Devedor</label><input type="text" id="devedorMECancel"></div>
+                    <div class="input-group"><label>Valor do Título R$</label><input type="number"
+                            id="valorTituloMECancel" step="0.01" oninput="calcularMECancelamento()" placeholder="0.00">
+                    </div>
+                    <div class="input-group"><label>Qtd. Devedores</label><input type="number" id="qtdMECancel"
+                            value="1" min="1" oninput="calcularMECancelamento()"></div>
+                    <div class="input-group"><label>ISS %</label><input type="number" id="issMECancel" value="5"
+                            oninput="calcularMECancelamento()"></div>
+                    <div class="input-group"><label>Taxa de Correio R$</label><input type="number"
+                            id="taxaCorreioMECancel" step="0.01" oninput="calcularMECancelamento()" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="resultado-container">
+                    <div class="resumo-selos" id="resumoMECancel">
+                        <i class="fa-solid fa-building"
+                            style="font-size: 40px; color: #eee; display: block; margin-bottom: 10px;"></i>
+                        <p class="placeholder-text">Preencha o valor para calcular Cancelamento ME.</p>
+                    </div>
+                    <div class="total-box">
+                        <small>TOTAL CANCELAMENTO ME</small>
+                        <h1 id="totalGeralMECancel">R$ 0,00</h1>
+                        <button class="btn-save" onclick="salvarHistorico()"><i class="fa-solid fa-save"></i>
+                            Salvar</button>
+                        <button class="btn-clear" onclick="limparFormulario()"><i class="fa-solid fa-eraser"></i>
+                            Limpar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-certidoes" class="page-section" style="display:none;">
+                <div class="card grid-form">
+                    <div class="input-group">
+                        <label>Nome / Devedor</label>
+                        <input type="text" id="nomeCertidao" placeholder="Nome para o histórico">
+                    </div>
+                    <div class="input-group">
+                        <label>Tipo de Serviço</label>
+                        <select id="tipoCertidaoMenu" onchange="calcularCertidao()">
+                            <option value="3109">98 - Certidões ou Traslados (ID 3109)</option>
+                            <option value="3095">97 I - Relação Diária - Art. 29 (ID 3095)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label id="labelAdicional">Páginas/Nomes Extras</label>
+                        <input type="number" id="qtdAdicionalCert" value="0" min="0" oninput="calcularCertidao()">
+                    </div>
+                    <div class="input-group">
+                        <label>ISS %</label>
+                        <input type="number" id="issCertidao" value="5" oninput="calcularCertidao()">
+                    </div>
+                </div>
+                <div class="resultado-container">
+                    <div class="resumo-selos" id="resumoCertidao">
+                        <i class="fa-solid fa-file-signature"
+                            style="font-size: 40px; color: #eee; display: block; margin-bottom: 10px;"></i>
+                        <p class="placeholder-text">Altere os campos para calcular os valores.</p>
+                    </div>
+                    <div class="total-box">
+                        <small>TOTAL DA CERTIDÃO</small>
+                        <h1 id="totalGeralCertidao">R$ 0,00</h1>
+                        <button class="btn-save" onclick="salvarHistorico()"><i class="fa-solid fa-save"></i>
+                            Salvar</button>
+                        <button class="btn-clear" onclick="limparFormulario()"><i class="fa-solid fa-eraser"></i>
+                            Limpar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-tabela" class="page-section" style="display:none;">
+                <div class="card">
+                    <div class="header-tabela">
+                        <h3>Tabela de Emolumentos PROTESTO</h3>
+                        <input type="text" id="buscaTabela" placeholder="Buscar por ID ou Descrição..."
+                            onkeyup="filtrarTabela()">
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Descrição</th>
+                                    <th>V. 2025 (Ref)</th>
+                                    <th>V. 2026 (Atual)</th>
+                                    <th>Judiciário</th>
+                                </tr>
+                            </thead>
+                            <tbody id="corpoTabela"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-historico" class="page-section" style="display:none;">
+                <div class="card">
+                    <h3>Últimos Orçamentos Gerados</h3>
+                    <table class="table-custom">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Devedor / Credor</th>
+                                <th>Valor Título</th>
+                                <th>Total</th>
+                                <th style="width: 120px; text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaHistorico"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <footer
+                style="margin-top: 30px; padding: 20px; text-align: center; border-top: 1px solid #eee; color: #888;">
+                <p style="margin: 0; font-size: 14px;">
+                    <i class="fa-solid fa-code"></i> Desenvolvido por: <strong style="color: var(--primary);">Caio César
+                        Cardoso</strong>
+                </p>
+                <small>© 2026 - Sistema de Orçamentos de Protesto</small>
+            </footer>
+        </div>
+    </div>
+    <div class="version-tag">
+        <span>v1.2.0</span>
+        <span class="status-online">● Online</span>
+    </div>
+    <div class="license-info" style="padding: 10px; font-size: 11px; color: #888; border-top: 1px solid #444;">
+        <p>Licenciado para: <strong>Softwiki - Cliente 01</strong></p>
+        <p>Validade: 31/12/2026</p>
+    </div>
+    <script src="tabela.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
