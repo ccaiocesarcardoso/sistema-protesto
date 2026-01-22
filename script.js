@@ -511,7 +511,6 @@ function limparFormulario() {
 // ==========================================
 
 function verificarLogin() {
-    // A senha "123456" codificada em Base64
     const hashCorreto = "MTIzNDU2"; 
     const senhaDigitada = document.getElementById('loginPassword').value;
     const erroMsg = document.getElementById('loginError');
@@ -590,3 +589,4 @@ window.onload = function () {
     renderHistorico();
 
 };
+
