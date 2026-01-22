@@ -511,11 +511,13 @@ function limparFormulario() {
 // ==========================================
 
 function verificarLogin() {
-    const senhaCorreta = "123456";
+    // A senha "123456" codificada em Base64
+    const hashCorreto = "MTIzNDU2"; 
     const senhaDigitada = document.getElementById('loginPassword').value;
     const erroMsg = document.getElementById('loginError');
 
-    if (senhaDigitada === senhaCorreta) {
+    // Codifica o que o usuário digitou e compara com o nosso código "MTIzNDU2"
+    if (window.btoa(senhaDigitada) === hashCorreto) {
         sessionStorage.setItem('logado', 'true');
         document.getElementById('login-screen').style.display = 'none';
         document.querySelector('.wrapper').style.display = 'flex';
@@ -586,4 +588,5 @@ window.onload = function () {
     if (!verificarValidadeLicenca()) return; // Trava o sistema se expirado
     carregarTema();
     renderHistorico();
+
 };
