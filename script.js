@@ -12,12 +12,12 @@ function verificarValidadeLicenca() {
     const dataExpira = new Date(LICENCA_SISTEMA.validade);
 
     if (hoje > dataExpira) {
-        alert("ALERTA: A licença deste sistema expirou em " + dataExpira.toLocaleDateString() + ". Entre em contato com a Softwiki Tecnologia.");
+        alert("ALERTA: A licença deste sistema expirou em " + dataExpira.toLocaleDateString() + ". Entre em contato com Caio César Cardoso.");
         document.body.innerHTML = `
             <div style="text-align:center; margin-top:100px; font-family:sans-serif;">
                 <h1 style="color:#e74c3c;">Licença Expirada</h1>
                 <p>O período de uso licenciado chegou ao fim.</p>
-                <p>Contato: www.softwiki.com.br</p>
+                <p>Contato:62998442472</p>
             </div>`;
         return false;
     }
@@ -609,3 +609,4 @@ window.onload = function () {
     carregarTema();
     renderHistorico();
 };
+
