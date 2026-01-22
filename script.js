@@ -485,6 +485,27 @@ function excluirOrcamento(index) {
     }
 }
 
+function fazerBackup() {
+    const dados = localStorage.getItem('protesto_historico');
+    if (!dados || dados === '[]') {
+        alert("Não há dados no histórico para salvar.");
+        return;
+    }
+
+    const dataHoje = new Date().toISOString().split('T')[0];
+    const nomeArquivo = `backup_protesto_${dataHoje}.json`;
+    const blob = new Blob([dados], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nomeArquivo;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 function limparFormulario() {
     document.querySelectorAll('input').forEach(input => {
         if (input.type === 'number') input.value = (input.id.includes('iss') ? 5 : (input.id.includes('qtd') || input.id.includes('Adicional') ? 1 : ''));
@@ -511,7 +532,8 @@ function limparFormulario() {
 // ==========================================
 
 function verificarLogin() {
-    const hashCorreto = "MTIzNDU2"; 
+    // A senha "123456" codificada em Base64
+    const hashCorreto = "MTIzNDU2";
     const senhaDigitada = document.getElementById('loginPassword').value;
     const erroMsg = document.getElementById('loginError');
 
@@ -526,7 +548,6 @@ function verificarLogin() {
         document.getElementById('loginPassword').value = '';
     }
 }
-
 function fazerLogout() {
     if (confirm("Deseja realmente sair do sistema?")) {
         sessionStorage.clear();
@@ -587,6 +608,4 @@ window.onload = function () {
     if (!verificarValidadeLicenca()) return; // Trava o sistema se expirado
     carregarTema();
     renderHistorico();
-
 };
-
