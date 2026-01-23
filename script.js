@@ -1,5 +1,5 @@
 // CONTROLE DE MANUTENÇÃO
-const MODO_MANUTENCAO = true; // Mude para true para ativar
+const MODO_MANUTENCAO = false; // Mude para true para ativar
 
 function verificarManutencao() {
     if (MODO_MANUTENCAO) {
@@ -17,7 +17,7 @@ function verificarManutencao() {
 // ==========================================
 const LICENCA_SISTEMA = {
     cliente: "Cliente Teste - Goiânia",
-    validade: "2026-06-01", // Data no formato Ano-Mês-Dia
+    validade: "2026-12-31", // Data no formato Ano-Mês-Dia
     status: "Ativa"
 };
 
@@ -31,7 +31,7 @@ function verificarValidadeLicenca() {
             <div style="text-align:center; margin-top:100px; font-family:sans-serif;">
                 <h1 style="color:#e74c3c;">Licença Expirada</h1>
                 <p>O período de uso licenciado chegou ao fim.</p>
-                <p>Contato:ccaiocesar648@gmail.com ou 62 998442472</p>
+                <p>Contato: www.softwiki.com.br</p>
             </div>`;
         return false;
     }
@@ -661,7 +661,7 @@ function limparFormulario() {
 // ==========================================
 
 function verificarLogin() {
-    // A senha  codificada 
+    // A senha "123456" codificada em Base64
     const hashCorreto = "MTIzNDU2";
     const senhaDigitada = document.getElementById('loginPassword').value;
     const erroMsg = document.getElementById('loginError');
@@ -747,5 +747,3 @@ window.onload = function () {
         document.querySelector('.wrapper').style.display = 'none';
     }
 };
-
-
