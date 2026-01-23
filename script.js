@@ -17,7 +17,7 @@ function verificarManutencao() {
 // ==========================================
 const LICENCA_SISTEMA = {
     cliente: "Cliente Teste - Goiânia",
-    validade: "2026-01-22", // Data no formato Ano-Mês-Dia
+    validade: "2026-06-01", // Data no formato Ano-Mês-Dia
     status: "Ativa"
 };
 
@@ -26,12 +26,12 @@ function verificarValidadeLicenca() {
     const dataExpira = new Date(LICENCA_SISTEMA.validade);
 
     if (hoje > dataExpira) {
-        alert("ALERTA: A licença deste sistema expirou em " + dataExpira.toLocaleDateString() + ". Entre em contato com a Softwiki Tecnologia.");
+        alert("ALERTA: A licença deste sistema expirou em " + dataExpira.toLocaleDateString() + ". Entre em contato com Caio César Cardoso.");
         document.body.innerHTML = `
             <div style="text-align:center; margin-top:100px; font-family:sans-serif;">
                 <h1 style="color:#e74c3c;">Licença Expirada</h1>
                 <p>O período de uso licenciado chegou ao fim.</p>
-                <p>Contato: www.softwiki.com.br</p>
+                <p>Contato:ccaiocesar648@gmail.com ou 62 998442472</p>
             </div>`;
         return false;
     }
@@ -661,7 +661,7 @@ function limparFormulario() {
 // ==========================================
 
 function verificarLogin() {
-    // A senha "123456" codificada em Base64
+    // A senha  codificada 
     const hashCorreto = "MTIzNDU2";
     const senhaDigitada = document.getElementById('loginPassword').value;
     const erroMsg = document.getElementById('loginError');
@@ -747,3 +747,4 @@ window.onload = function () {
         document.querySelector('.wrapper').style.display = 'none';
     }
 };
+
