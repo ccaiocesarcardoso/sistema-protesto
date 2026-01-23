@@ -347,47 +347,12 @@ function calcularCertidao() {
 // ==========================================
 
 function salvarHistorico() {
-    let sufixo = "";
-    // Nome padrão para a primeira página (calculo)
-    let tipoOrcamento = "CPF/CNPJ - Liq/Desistência";
-    let idResumo = "resumoSelos";
-    let idTotal = "totalGeral";
 
-    // Define o nome exato conforme a página que está visível no momento
-    if (document.getElementById('page-cancelamento').style.display === 'block') {
-        sufixo = "Cancel";
-        tipoOrcamento = "CPF/CNPJ - Cancelamento";
-        idResumo = "resumoCancelamento";
-        idTotal = "totalGeralCancel";
-    }
-    else if (document.getElementById('page-me-liquidacao').style.display === 'block') {
-        sufixo = "MELiq";
-        tipoOrcamento = "ME - Liq/Desistência";
-        idResumo = "resumoMELiq";
-        idTotal = "totalGeralMELiq";
-    }
-    else if (document.getElementById('page-me-cancelamento').style.display === 'block') {
-        sufixo = "MECancel";
-        tipoOrcamento = "ME - Cancelamento";
-        idResumo = "resumoMECancel";
-        idTotal = "totalGeralMECancel";
-    }
-    else if (document.getElementById('page-certidoes').style.display === 'block') {
-        tipoOrcamento = "Certidão de Protesto";
-        idResumo = "resumoCertidao";
-        idTotal = "totalGeralCertidao";
+    // Obter dados padronizados da tela atual
+    const novoOrcamento = obterDadosDaTela();
 
-        const devedor = document.getElementById('nomeCertidao').value || "---";
-        const novoOrcamento = {
-            data: new Date().toLocaleString('pt-BR'),
-            tipo: tipoOrcamento,
-            credor: "---",
-            devedor: devedor,
-            valorTitulo: "0.00",
-            total: document.getElementById(idTotal).innerText,
-            detalhes: document.getElementById(idResumo).innerHTML
-        };
-
+    // Caso especial para certidões (lógica antiga tinha um return antecipado)
+    if (novoOrcamento.tipo === "Certidão de Protesto") {
         let historico = JSON.parse(localStorage.getItem('protesto_historico') || '[]');
         historico.push(novoOrcamento);
         localStorage.setItem('protesto_historico', JSON.stringify(historico));
@@ -395,24 +360,6 @@ function salvarHistorico() {
         renderHistorico();
         return;
     }
-
-    // Pega os valores dos inputs baseados no sufixo da página
-    const credor = (document.getElementById('credor' + sufixo) || {}).value || "---";
-    const devedor = (document.getElementById('devedor' + sufixo) || {}).value || "---";
-    const valorTitulo = (document.getElementById('valorTitulo' + sufixo) || {}).value || "0.00";
-    const total = document.getElementById(idTotal).innerText;
-    const detalhamento = document.getElementById(idResumo).innerHTML;
-
-    // Cria o objeto para salvar
-    const novoOrcamento = {
-        data: new Date().toLocaleString('pt-BR'),
-        tipo: tipoOrcamento,
-        credor: credor,
-        devedor: devedor,
-        valorTitulo: valorTitulo,
-        total: total,
-        detalhes: detalhamento
-    };
 
     // Salva no LocalStorage
     let historico = JSON.parse(localStorage.getItem('protesto_historico') || '[]');
@@ -453,10 +400,6 @@ function renderHistorico() {
 
             <td>
                 <div style="display: flex; gap: 5px; justify-content: center;">
-                    <button class="btn-print" title="Enviar WhatsApp" onclick="enviarWhatsApp(${index})" style="background: #25D366;">
-                        <i class="fa-solid fa-brands fa-whatsapp"></i>
-                    </button>
-                    
                     <button class="btn-print" title="Imprimir" onclick="imprimirOrcamento(${index})">
                         <i class="fa-solid fa-print"></i>
                     </button>
@@ -550,23 +493,17 @@ function imprimirOrcamento(index) {
 }
 
 
-function enviarWhatsApp(index) {
-    let historico = JSON.parse(localStorage.getItem('protesto_historico') || '[]');
-    const o = historico[index];
-    if (!o) return;
+// ==========================================
+// 6. INTEGRAÇÃO WHATSAPP & UTILITÁRIOS
+// ==========================================
 
-    let numDigitado = prompt("Digite o número do WhatsApp com DDD (Ex: 62988887777):");
-    if (!numDigitado) return;
-
-    let numLimpo = numDigitado.replace(/\D/g, '');
-    if (numLimpo.length > 0 && numLimpo.length <= 11) {
-        numLimpo = "55" + numLimpo;
-    }
-
-    // --- LÓGICA DE ALINHAMENTO PROFISSIONAL ---
-    // Criamos um elemento temporário para ler o HTML dos detalhes
+/**
+ * Função auxiliar para extrair dados da mensagem do objeto histórico ou da tela
+ */
+function gerarMensagemWhatsApp(dados) {
+    // Formata detalhes a partir do HTML salvo
     const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = o.detalhes;
+    tempDiv.innerHTML = dados.detalhes;
 
     let detalhamentoFormatado = "";
     const blocos = tempDiv.querySelectorAll('.detalhe-calculo');
@@ -576,33 +513,114 @@ function enviarWhatsApp(index) {
         const calculo = bloco.querySelector('small')?.innerText || "";
         const totalLinha = bloco.querySelector('span')?.innerText || "";
 
-        detalhamentoFormatado += `*${titulo}*%0A`; // Título em Negrito
-
+        detalhamentoFormatado += `*${titulo}*%0A`;
         if (calculo) {
-            // Se houver cálculo (Emol, Fund, ISS), coloca na linha de baixo
             detalhamentoFormatado += `${calculo} (Emol. Fund. ISS)%0A`;
         }
-
-        detalhamentoFormatado += `*${totalLinha}*%0A%0A`; // Total da taxa em Negrito
+        detalhamentoFormatado += `*${totalLinha}*%0A%0A`;
     });
 
-    // --- MONTAGEM DA MENSAGEM FINAL ---
-    const mensagem = `*ORÇAMENTO DE PROTESTO - 2026*%0A` +
+    return `*ORÇAMENTO DE PROTESTO - 2026*%0A` +
         `----------------------------------%0A` +
-        `*Serviço:* ${o.tipo}%0A` +
-        `*Devedor:* ${o.devedor}%0A` +
-        `*Credor:* ${o.credor}%0A` +
-        `*Valor do Título:* R$ ${parseFloat(o.valorTitulo).toFixed(2).replace('.', ',')}%0A` +
+        `*Serviço:* ${dados.tipo}%0A` +
+        `*Devedor:* ${dados.devedor}%0A` +
+        `*Credor:* ${dados.credor}%0A` +
+        `*Valor do Título:* R$ ${parseFloat(dados.valorTitulo).toFixed(2).replace('.', ',')}%0A` +
         `----------------------------------%0A` +
         `*DETALHAMENTO DAS CUSTAS:*%0A%0A` +
         `${detalhamentoFormatado}` +
         `----------------------------------%0A` +
-        `*TOTAL GERAL: ${o.total}*%0A` +
+        `*TOTAL GERAL: ${dados.total}*%0A` +
         `----------------------------------%0A` +
         `_Enviado via Sistema Calculadora de Custas de Protesto_`;
+}
+
+/**
+ * Função unificada para abrir o WhatsApp
+ */
+function abrirWhatsApp(mensagem) {
+    let numDigitado = prompt("Digite o número do WhatsApp com DDD (Ex: 62988887777):");
+    if (!numDigitado) return;
+
+    let numLimpo = numDigitado.replace(/\D/g, '');
+    if (numLimpo.length > 0 && numLimpo.length <= 11) {
+        numLimpo = "55" + numLimpo;
+    }
 
     const url = `https://wa.me/${numLimpo}?text=${mensagem}`;
     window.open(url, '_blank');
+}
+
+
+/**
+ * Envia WhatsApp diretamente da tela atual (sem salvar antes)
+ */
+function enviarWhatsAppDireto() {
+    const dados = obterDadosDaTela();
+    const mensagem = gerarMensagemWhatsApp(dados);
+    abrirWhatsApp(mensagem);
+}
+
+/**
+ * Extrai os dados da tela ativa atualmente.
+ * Substitui a lógica repetitiva de salvarHistorico.
+ */
+function obterDadosDaTela() {
+    let sufixo = "";
+    let tipoOrcamento = "CPF/CNPJ - Liq/Desistência";
+    let idResumo = "resumoSelos";
+    let idTotal = "totalGeral";
+
+    if (document.getElementById('page-cancelamento').style.display === 'block') {
+        sufixo = "Cancel";
+        tipoOrcamento = "CPF/CNPJ - Cancelamento";
+        idResumo = "resumoCancelamento";
+        idTotal = "totalGeralCancel";
+    }
+    else if (document.getElementById('page-me-liquidacao').style.display === 'block') {
+        sufixo = "MELiq";
+        tipoOrcamento = "ME - Liq/Desistência";
+        idResumo = "resumoMELiq";
+        idTotal = "totalGeralMELiq";
+    }
+    else if (document.getElementById('page-me-cancelamento').style.display === 'block') {
+        sufixo = "MECancel";
+        tipoOrcamento = "ME - Cancelamento";
+        idResumo = "resumoMECancel";
+        idTotal = "totalGeralMECancel";
+    }
+    else if (document.getElementById('page-certidoes').style.display === 'block') {
+        tipoOrcamento = "Certidão de Protesto";
+        idResumo = "resumoCertidao";
+        idTotal = "totalGeralCertidao";
+        const devedor = document.getElementById('nomeCertidao').value || "---";
+
+        return {
+            data: new Date().toLocaleString('pt-BR'),
+            tipo: tipoOrcamento,
+            credor: "---",
+            devedor: devedor,
+            valorTitulo: "0.00",
+            total: document.getElementById(idTotal).innerText,
+            detalhes: document.getElementById(idResumo).innerHTML
+        };
+    }
+
+    const credor = (document.getElementById('credor' + sufixo) || {}).value || "---";
+    const devedor = (document.getElementById('devedor' + sufixo) || {}).value || "---";
+    const valorTitulo = (document.getElementById('valorTitulo' + sufixo) || {}).value || "0.00";
+    const total = document.getElementById(idTotal).innerText;
+    const detalhamento = document.getElementById(idResumo).innerHTML;
+
+    return {
+        data: new Date().toLocaleString('pt-BR'),
+        tipo: tipoOrcamento,
+        credor: credor,
+        devedor: devedor,
+        valorTitulo: valorTitulo,
+        total: total,
+        detalhes: detalhamento
+    };
 }
 
 function excluirOrcamento(index) {
