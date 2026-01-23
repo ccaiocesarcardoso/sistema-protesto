@@ -1,5 +1,5 @@
 // CONTROLE DE MANUTENÇÃO
-const MODO_MANUTENCAO = false; // Mude para true para ativar
+const MODO_MANUTENCAO = true; // Mude para true para ativar
 
 function verificarManutencao() {
     if (MODO_MANUTENCAO) {
@@ -747,4 +747,5 @@ window.onload = function () {
         document.querySelector('.wrapper').style.display = 'none';
     }
 };
+
 
