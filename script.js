@@ -1,9 +1,23 @@
+// CONTROLE DE MANUTENÇÃO
+const MODO_MANUTENCAO = false; // Mude para true para ativar
+
+function verificarManutencao() {
+    if (MODO_MANUTENCAO) {
+        const screen = document.getElementById('maintenance-screen');
+        if (screen) {
+            screen.style.display = 'flex';
+            // Impede qualquer outra interação
+            document.body.style.overflow = 'hidden';
+        }
+    }
+}
+
 // ==========================================
 // CONFIGURAÇÃO DA LICENÇA
 // ==========================================
 const LICENCA_SISTEMA = {
     cliente: "Cliente Teste - Goiânia",
-    validade: "2026-12-31", // Data no formato Ano-Mês-Dia
+    validade: "2026-01-22", // Data no formato Ano-Mês-Dia
     status: "Ativa"
 };
 
@@ -12,12 +26,12 @@ function verificarValidadeLicenca() {
     const dataExpira = new Date(LICENCA_SISTEMA.validade);
 
     if (hoje > dataExpira) {
-        alert("ALERTA: A licença deste sistema expirou em " + dataExpira.toLocaleDateString() + ". Entre em contato com Caio César Cardoso.");
+        alert("ALERTA: A licença deste sistema expirou em " + dataExpira.toLocaleDateString() + ". Entre em contato com a Softwiki Tecnologia.");
         document.body.innerHTML = `
             <div style="text-align:center; margin-top:100px; font-family:sans-serif;">
                 <h1 style="color:#e74c3c;">Licença Expirada</h1>
                 <p>O período de uso licenciado chegou ao fim.</p>
-                <p>Contato:62998442472</p>
+                <p>Contato: www.softwiki.com.br</p>
             </div>`;
         return false;
     }
@@ -334,35 +348,81 @@ function calcularCertidao() {
 
 function salvarHistorico() {
     let sufixo = "";
-    let tipoOrcamento = "Liquidação/Desistência";
+    // Nome padrão para a primeira página (calculo)
+    let tipoOrcamento = "CPF/CNPJ - Liq/Desistência";
     let idResumo = "resumoSelos";
     let idTotal = "totalGeral";
 
-    if (document.getElementById('page-cancelamento').style.display === 'block') { sufixo = "Cancel"; tipoOrcamento = "Cancelamento"; idResumo = "resumoCancelamento"; idTotal = "totalGeralCancel"; }
-    else if (document.getElementById('page-me-liquidacao').style.display === 'block') { sufixo = "MELiq"; tipoOrcamento = "ME - Liquidação"; idResumo = "resumoMELiq"; idTotal = "totalGeralMELiq"; }
-    else if (document.getElementById('page-me-cancelamento').style.display === 'block') { sufixo = "MECancel"; tipoOrcamento = "ME - Cancelamento"; idResumo = "resumoMECancel"; idTotal = "totalGeralMECancel"; }
+    // Define o nome exato conforme a página que está visível no momento
+    if (document.getElementById('page-cancelamento').style.display === 'block') {
+        sufixo = "Cancel";
+        tipoOrcamento = "CPF/CNPJ - Cancelamento";
+        idResumo = "resumoCancelamento";
+        idTotal = "totalGeralCancel";
+    }
+    else if (document.getElementById('page-me-liquidacao').style.display === 'block') {
+        sufixo = "MELiq";
+        tipoOrcamento = "ME - Liq/Desistência";
+        idResumo = "resumoMELiq";
+        idTotal = "totalGeralMELiq";
+    }
+    else if (document.getElementById('page-me-cancelamento').style.display === 'block') {
+        sufixo = "MECancel";
+        tipoOrcamento = "ME - Cancelamento";
+        idResumo = "resumoMECancel";
+        idTotal = "totalGeralMECancel";
+    }
     else if (document.getElementById('page-certidoes').style.display === 'block') {
-        tipoOrcamento = "Certidão de Protesto"; idResumo = "resumoCertidao"; idTotal = "totalGeralCertidao";
+        tipoOrcamento = "Certidão de Protesto";
+        idResumo = "resumoCertidao";
+        idTotal = "totalGeralCertidao";
+
         const devedor = document.getElementById('nomeCertidao').value || "---";
-        const novoOrcamento = { data: new Date().toLocaleString('pt-BR'), tipo: tipoOrcamento, credor: "---", devedor: devedor, valorTitulo: "0.00", total: document.getElementById(idTotal).innerText, detalhes: document.getElementById(idResumo).innerHTML };
+        const novoOrcamento = {
+            data: new Date().toLocaleString('pt-BR'),
+            tipo: tipoOrcamento,
+            credor: "---",
+            devedor: devedor,
+            valorTitulo: "0.00",
+            total: document.getElementById(idTotal).innerText,
+            detalhes: document.getElementById(idResumo).innerHTML
+        };
+
         let historico = JSON.parse(localStorage.getItem('protesto_historico') || '[]');
         historico.push(novoOrcamento);
         localStorage.setItem('protesto_historico', JSON.stringify(historico));
-        alert('Orçamento salvo!'); renderHistorico(); return;
+        alert('Orçamento de Certidão salvo!');
+        renderHistorico();
+        return;
     }
 
+    // Pega os valores dos inputs baseados no sufixo da página
     const credor = (document.getElementById('credor' + sufixo) || {}).value || "---";
     const devedor = (document.getElementById('devedor' + sufixo) || {}).value || "---";
     const valorTitulo = (document.getElementById('valorTitulo' + sufixo) || {}).value || "0.00";
     const total = document.getElementById(idTotal).innerText;
     const detalhamento = document.getElementById(idResumo).innerHTML;
 
-    const novoOrcamento = { data: new Date().toLocaleString('pt-BR'), tipo: tipoOrcamento, credor: credor, devedor: devedor, valorTitulo: valorTitulo, total: total, detalhes: detalhamento };
+    // Cria o objeto para salvar
+    const novoOrcamento = {
+        data: new Date().toLocaleString('pt-BR'),
+        tipo: tipoOrcamento,
+        credor: credor,
+        devedor: devedor,
+        valorTitulo: valorTitulo,
+        total: total,
+        detalhes: detalhamento
+    };
+
+    // Salva no LocalStorage
     let historico = JSON.parse(localStorage.getItem('protesto_historico') || '[]');
     historico.push(novoOrcamento);
     localStorage.setItem('protesto_historico', JSON.stringify(historico));
-    alert('Orçamento salvo no histórico!'); renderHistorico();
+
+    alert('Orçamento salvo no histórico!');
+    renderHistorico();
 }
+
 
 function renderHistorico() {
     const lista = document.getElementById('listaHistorico');
@@ -372,22 +432,35 @@ function renderHistorico() {
     lista.innerHTML = historico.map((o, index) => {
         return `
         <tr style="border-bottom: 1px solid var(--border-color);">
-            <td style="font-size: 0.9em; color: var(--text-light); text-align: center;">${o.data}</td>
+            <td style="font-size: 0.85em; color: var(--text-light); text-align: center;">${o.data}</td>
+            
+            <td style="font-size: 0.9em; font-weight: 600; color: var(--primary); min-width: 150px;">
+                ${o.tipo || 'CPF/CNPJ - Liq/Desistência'}
+            </td>
+
             <td>
                 <strong style="color: var(--primary);">${o.devedor}</strong><br>
                 <small style="color: var(--text-light);">Credor: ${o.credor}</small>
             </td>
-            <td style="text-align: center;">
+
+            <td style="text-align: center; font-size: 0.95em;">
                 R$ ${parseFloat(o.valorTitulo).toFixed(2).replace('.', ',')}
             </td>
+
             <td style="text-align: center;">
                 <strong style="color: #27ae60; font-size: 1.1em;">${o.total}</strong>
             </td>
+
             <td>
                 <div style="display: flex; gap: 5px; justify-content: center;">
+                    <button class="btn-print" title="Enviar WhatsApp" onclick="enviarWhatsApp(${index})" style="background: #25D366;">
+                        <i class="fa-solid fa-brands fa-whatsapp"></i>
+                    </button>
+                    
                     <button class="btn-print" title="Imprimir" onclick="imprimirOrcamento(${index})">
                         <i class="fa-solid fa-print"></i>
                     </button>
+                    
                     <button class="btn-clear" title="Excluir" onclick="excluirOrcamento(${index})" style="background: var(--danger);">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
@@ -474,6 +547,62 @@ function imprimirOrcamento(index) {
     setTimeout(() => {
         printWindow.print();
     }, 500);
+}
+
+
+function enviarWhatsApp(index) {
+    let historico = JSON.parse(localStorage.getItem('protesto_historico') || '[]');
+    const o = historico[index];
+    if (!o) return;
+
+    let numDigitado = prompt("Digite o número do WhatsApp com DDD (Ex: 62988887777):");
+    if (!numDigitado) return;
+
+    let numLimpo = numDigitado.replace(/\D/g, '');
+    if (numLimpo.length > 0 && numLimpo.length <= 11) {
+        numLimpo = "55" + numLimpo;
+    }
+
+    // --- LÓGICA DE ALINHAMENTO PROFISSIONAL ---
+    // Criamos um elemento temporário para ler o HTML dos detalhes
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = o.detalhes;
+
+    let detalhamentoFormatado = "";
+    const blocos = tempDiv.querySelectorAll('.detalhe-calculo');
+
+    blocos.forEach(bloco => {
+        const titulo = bloco.querySelector('strong')?.innerText || "";
+        const calculo = bloco.querySelector('small')?.innerText || "";
+        const totalLinha = bloco.querySelector('span')?.innerText || "";
+
+        detalhamentoFormatado += `*${titulo}*%0A`; // Título em Negrito
+
+        if (calculo) {
+            // Se houver cálculo (Emol, Fund, ISS), coloca na linha de baixo
+            detalhamentoFormatado += `${calculo} (Emol. Fund. ISS)%0A`;
+        }
+
+        detalhamentoFormatado += `*${totalLinha}*%0A%0A`; // Total da taxa em Negrito
+    });
+
+    // --- MONTAGEM DA MENSAGEM FINAL ---
+    const mensagem = `*ORÇAMENTO DE PROTESTO - 2026*%0A` +
+        `----------------------------------%0A` +
+        `*Serviço:* ${o.tipo}%0A` +
+        `*Devedor:* ${o.devedor}%0A` +
+        `*Credor:* ${o.credor}%0A` +
+        `*Valor do Título:* R$ ${parseFloat(o.valorTitulo).toFixed(2).replace('.', ',')}%0A` +
+        `----------------------------------%0A` +
+        `*DETALHAMENTO DAS CUSTAS:*%0A%0A` +
+        `${detalhamentoFormatado}` +
+        `----------------------------------%0A` +
+        `*TOTAL GERAL: ${o.total}*%0A` +
+        `----------------------------------%0A` +
+        `_Enviado via Sistema Calculadora de Custas de Protesto_`;
+
+    const url = `https://wa.me/${numLimpo}?text=${mensagem}`;
+    window.open(url, '_blank');
 }
 
 function excluirOrcamento(index) {
@@ -594,7 +723,19 @@ const carregarTema = () => {
 
 // INICIALIZAÇÃO DO SISTEMA
 window.onload = function () {
-    carregarTema();
+    // 1. Manutenção (Prioridade Máxima)
+    verificarManutencao();
+    if (MODO_MANUTENCAO) return;
+
+    // 2. Validade da Licença (Segurança)
+    // Verificamos antes de carregar o sistema para garantir proteção
+    if (!verificarValidadeLicenca()) return;
+
+    // 3. Interface e Dados
+    carregarTema(); // Chamado apenas uma vez aqui
+    renderHistorico();
+
+    // 4. Fluxo de Acesso (Login)
     const isLogado = sessionStorage.getItem('logado') === 'true';
 
     if (isLogado) {
@@ -605,8 +746,4 @@ window.onload = function () {
         document.getElementById('login-screen').style.display = 'flex';
         document.querySelector('.wrapper').style.display = 'none';
     }
-    if (!verificarValidadeLicenca()) return; // Trava o sistema se expirado
-    carregarTema();
-    renderHistorico();
 };
-
