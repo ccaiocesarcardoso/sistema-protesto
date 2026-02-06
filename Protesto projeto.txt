@@ -1,0 +1,50 @@
+Quero que seja menu lateral  nome do sistema vai ser  Protesto... 
+Nesse menu precisa conter 
+- CPF/CNPJ - Orçamento de Liquidação/Desistência (pagamento posterior)
+- CPF/CNPJ - Orçamento de Cancelamento de Protesto 
+- Micro-Empresa Orçamento de Liquidação/Desistência 
+- Micro-Empresa Orçamento de Cancelamento de Protesto
+- Tabela de emolumento 2026 - Atualizada
+- historico de orçamento
+- Sair  do sistema
+(FICOU OK)
+
+2)  CPF/CNPJ - Orçamento de Liquidação/Desistência
+ao clicar no menu  nesse item acima precisa abrir uma tela aonde precisa carregar uma tela contendo seguintes informaçoes
+Credor  ---   Devedor --- documento -- Valor do Titulo R$ ----- Perfil do cliente  PF ou PJ  - serviço Liquidação/Desistência --- Opção se e pagamento posterior ou não
+Qtd. devedores ---- ISS%  --- Total
+Como funciona liquidação/Desistência de um titulo  credor chega passa as informação cartorio gera um selo de apontamento e intimação
+Selo de apontamento e id 3080     e da intimação id 3093  depois disso ele vai liquidar/Desistencia  do titulo nesse momento valor digitado valor do titulo vai fazer uma busca e vai puxar os id 3081 ate 3092.
+Calcula tambem fundos estaduais que 24.25% sobre valor do Emolumento protesto que estão dento do IDS 3081 ate 3092 mesma coisa sobra valor da intimação selo 3093 * 24.25% e o apontamento nao tem calcula porque tem somente a taxa judiciaria 
+
+3)  CPF/CNPJ - Orçamento de Cancelamento de Protesto Selo de apontamento e id 3131     e da intimação id 3144  depois disso ele vai cancelamento  do titulo nesse momento valor digitado valor do titulo vai fazer uma busca e vai puxar os id 3132 ate 3143.
+Calcula tambem fundos estaduais que 24.25% sobre valor do Emolumento protesto que estão dento do IDS 3131 ate 3144 mesma coisa sobra valor da intimação selo 3144 * 24.25% e o apontamento nao tem calcula porque tem somente a taxa judiciaria. Porem quando Cancela tem que puxar a averbação para dar baixa do protesto id 3145 nesse id e calculo somente dele fundos 24,25% e o ISS% 
+
+Gostaria que os valores que estão cobrando seja mostrado como estão sendo cobrados por exempo selo de averbação 55.67 x 24,25%  Iss% 55.67 x porcentagem escolhida 
+somando  valor da averbação mais  fundos  + isso total do selo da averbação e x entendeu?
+
+4)  CPF/CNPJ -Micro-Empresa Orçamento de Cancelamento de Protesto Selo de apontamento e id 3196     e da intimação id 3209  depois disso ele vai cancelamento  do titulo nesse momento valor digitado valor do titulo vai fazer uma busca e vai puxar os id 3197 ate 3208.
+Calcula tambem fundos estaduais que 24.25% sobre valor do Emolumento protesto que estão dento do IDS 3197 ate 3208 mesma coisa sobra valor da intimação selo 3209 * 24.25% e o apontamento nao  calcula porque tem somente a taxa judiciaria. Porem quando Cancela tem que puxar a averbação para dar baixa do protesto id 3210 nesse id e calculo somente dele fundos 24,25% e o ISS% 
+
+
+5) Como funciona Micro-Empresa Orçamento de Liquidação/Desistência de um titulo  credor chega passa as informação cartorio gera um selo de apontamento e intimação
+Selo de apontamento e id 3146     e da intimação id 3159  depois disso ele vai liquidar/Desistencia  do titulo nesse momento valor digitado valor do titulo vai fazer uma busca e vai puxar os id 3147 ate 3158.
+Calcula tambem fundos estaduais que 24.25% sobre valor do Emolumento protesto que estão dento do IDS 3147 ate 3158 mesma coisa sobra valor da intimação selo 3159 * 24.25% e o apontamento nao tem calcula porque tem somente a taxa judiciaria 
+
+
+TELA PRINCIPAL
+Agora quero criar que quando clicar em protesto vai para tela aonde esteja escrito  Seja bem vindo a tela de calculos  e orçamentos do protesto
+
+
+ORÇAMENTOS 
+
+Agora vamos arrumar o botão salvar ! Preciso que quando salvar cada tela e for para o historico e prciso que lá  gera um formulario novo com seguintes informação -- Liquidação/Desistencia trazer valores desse campo como está  IMAGEM DO DETALHAMENTOS DE CALCULOS
+
+
+CERTIDÕES 
+
+Agora preciso que quando clicar no menu Certidões de Protesto abra uma tela de certidoes porem tem dois tipos de certidão tem a ' 97 I - Certidão diária em forma de relação (artigo 29, da Lei Federal nº 9.492/97)' do id 3095 porém se tiver mais de uma pessoa  usa essa tabela 97 II - por nome de pessoa que, além do primeiro, constar da relação de protestos tirados e cancelados id 3096. para fazer cálculos precisa  calcular emolumento do id 3095 * 24.25%  Depois o ISS%  valor selecionado do ISS precisa criar o campo.. E do ID 3096 precisa calcular emolumento pg acrescida * 24.25% depois tirar o ISS% dependendo do valor selecionado.
+
+Agora preciso que quando clicar no menu Certidões de Protesto abra uma tela de certidoes porem tem dois tipos de certidão tem a ' 98 - Certidões ou traslados (Protesto de Título)' do id 3109 porém se tiver mais de uma pagina  usa essa tabela  id 3110. para fazer cálculos precisa  calcular emolumento do id 3109 * 24.25%  Depois o ISS% dependo valor selecionado do ISS precisa criar o campo.. E do ID 3110 precisa calcular emolumento pg acrescida * 24.25% depois tirar o ISS% dependendo do valor selecionado.. Precisa dar a opção para selecionar tipo de certidão  Se  Certidões Ou Traslados   ------- Certidão diária em forma de relação (artigo 29, da Lei Federal nº 9.492/97)
+
+TELA DE HISTORICO E PDF
