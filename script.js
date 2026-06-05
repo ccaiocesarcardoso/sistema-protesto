@@ -166,7 +166,7 @@ function calcular() {
     const ALIQUOTA_FUNDOS = 0.2425;
     const ISS_FATOR = issPerc / 100;
     const idApontamento = 3080;
-    const vJudiciario = 17.68;
+    const vJudiciario = 18.43;
     const idIntimacao = 3093;
     const vBaseInt = 7.43 * qtdDevedores;
     const fInt = vBaseInt * ALIQUOTA_FUNDOS;
@@ -207,7 +207,7 @@ function calcularCancelamento() {
     const issPerc = parseFloat(document.getElementById('issCancel').value) || 5;
     const ALIQUOTA_FUNDOS = 0.2425;
     const ISS_FATOR = issPerc / 100;
-    const vJudiciario = 17.68;
+    const vJudiciario = 18.43;
     const vBaseInt = 11.15 * qtd;
     const fInt = vBaseInt * ALIQUOTA_FUNDOS;
     const iInt = vBaseInt * ISS_FATOR;
